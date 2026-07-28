@@ -7,13 +7,17 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:standalone": "STANDALONE=1 vite build",
     "preview": "vite preview",
+    "start": "npm run build && vite preview",
+    "open": "npm run build:standalone && node tools/open-standalone.js",
     "generate:plans": "node tools/generator.js"
   },
   "dependencies": {
     "phaser": "^3.87.0"
   },
   "devDependencies": {
-    "vite": "^6.0.7"
+    "vite": "^6.0.7",
+    "vite-plugin-singlefile": "^2.3.0"
   }
 }

@@ -11,12 +11,29 @@ RPG spatial 2D vue de dessus, inspiré de Pokémon Donjon Mystère. Projet Pegas
 
 ## Démarrage
 
+### Option 1 — Double-clic (sans serveur)
+
+```bash
+npm install
+npm run open
+```
+
+Génère `standalone/index.html` (tout en un seul fichier) et ouvre le navigateur. Tu peux aussi double-cliquer ce fichier plus tard — il fonctionne sans `npm run dev`.
+
+### Option 2 — Mode développement
+
 ```bash
 npm install
 npm run dev
 ```
 
-Ouvrir l’URL affichée par Vite (généralement `http://localhost:5173`).
+Le navigateur s’ouvre automatiquement sur l’URL locale (souvent `http://localhost:5173`).
+
+### Option 3 — GitHub Pages (en ligne)
+
+Après merge sur `main`, le jeu est publié automatiquement sur GitHub Pages. Active **Pages → Source : GitHub Actions** dans les paramètres du dépôt.
+
+> Ne pas ouvrir `index.html` à la racine du projet : ce fichier source nécessite le serveur Vite. Utilise `standalone/index.html` ou `npm run dev`.
 
 ## Structure
 
