@@ -25,9 +25,22 @@
         height: 100%;
       }
     </style>
-    <script src="./game.js"></script>
   </head>
   <body>
     <div id="game-container"></div>
+
+    <!-- Phaser (fichier local, pas CDN) -->
+    <script src="lib/phaser.min.js"></script>
+
+    <!-- Données intégrées (pas de fetch) -->
+    <script src="js/plans-data.js"></script>
+
+    <!-- Jeu : scripts classiques, pas de modules ES -->
+    <script src="js/constants.js"></script>
+    <script src="js/grid.js"></script>
+    <script src="js/autotiler.js"></script>
+    <script src="js/plan-picker.js"></script>
+    <script src="js/scenes.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>
