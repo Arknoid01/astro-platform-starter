@@ -1,0 +1,18 @@
+{
+  "name": "astro-rpg",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "RPG spatial 2D — PegasusCorp",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "phaser": "^3.87.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.7"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "test-dungeon",
+  "floors": 5,
+  "tileset": "placeholder",
+  "enemyTables": [],
+  "itemTables": []
+}
