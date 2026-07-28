@@ -24,23 +24,78 @@
         width: 100%;
         height: 100%;
       }
+      #boot-status {
+        position: fixed;
+        left: 16px;
+        top: 16px;
+        z-index: 9999;
+        font-family: monospace;
+        font-size: 14px;
+        color: #8ab4ff;
+        pointer-events: none;
+      }
+      #boot-error {
+        position: fixed;
+        left: 16px;
+        top: 16px;
+        z-index: 9999;
+        max-width: 90%;
+        font-family: monospace;
+        font-size: 14px;
+        color: #ff6b6b;
+        white-space: pre-wrap;
+      }
     </style>
   </head>
   <body>
+    <div id="boot-status">Chargement…</div>
     <div id="game-container"></div>
 
-    <!-- Phaser (fichier local, pas CDN) -->
-    <script src="lib/phaser.min.js"></script>
+    <script>
+      function showBootError(message) {
+        var el = document.getElementById('boot-error');
+        if (!el) {
+          el = document.createElement('div');
+          el.id = 'boot-error';
+          document.body.appendChild(el);
+        }
+        el.textContent = message;
+        var status = document.getElementById('boot-status');
+        if (status) {
+          status.style.display = 'none';
+        }
+      }
 
-    <!-- Données intégrées (pas de fetch) -->
-    <script src="js/plans-data.js"></script>
+      function hideBootStatus() {
+        var status = document.getElementById('boot-status');
+        if (status) {
+          status.style.display = 'none';
+        }
+      }
 
-    <!-- Jeu : scripts classiques, pas de modules ES -->
+      window.addEventListener('error', function (event) {
+        if (event.filename && event.message) {
+          showBootError('Erreur JS : ' + event.message + '\n' + event.filename);
+        }
+      });
+    </script>
+
+    <script src="lib/phaser.min.js" onerror="showBootError('Phaser introuvable (lib/phaser.min.js). Ouvre play/index.html ou le lien GitHub Pages, pas la vue fichier GitHub.')"></script>
+    <script src="js/plans-data.js" onerror="showBootError('Données introuvables (js/plans-data.js).')"></script>
     <script src="js/constants.js"></script>
     <script src="js/grid.js"></script>
     <script src="js/autotiler.js"></script>
     <script src="js/plan-picker.js"></script>
     <script src="js/scenes.js"></script>
     <script src="js/main.js"></script>
+    <script>
+      hideBootStatus();
+
+      if (typeof Phaser === 'undefined') {
+        showBootError('Phaser n’a pas chargé. Vérifie que lib/phaser.min.js est accessible.');
+      } else if (typeof window.DUNGEON_PLANS === 'undefined') {
+        showBootError('Données de donjon absentes (plans-data.js).');
+      }
+    </script>
   </body>
 </html>
