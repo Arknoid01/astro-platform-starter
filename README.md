@@ -2,100 +2,84 @@
 
 RPG spatial 2D vue de dessus, inspiré de Pokémon Donjon Mystère. Projet PegasusCorp.
 
+## Tester le jeu (sans commandes)
+
+### En local — double-clic
+
+Ouvre **`dist/index.html`** dans ton navigateur (Chrome ou Firefox).
+
+Le dossier `dist/` est versionné : clone le dépôt, double-clic, c’est tout. Pas de `npm`, pas de serveur.
+
+### En ligne
+
+Après activation de GitHub Pages (Source : GitHub Actions), le jeu est accessible via l’URL du dépôt — pareil, aucune commande.
+
+## Modifier le code
+
+Seulement si tu touches au source :
+
+```bash
+npm install          # une fois
+npm run build        # après chaque modification
+```
+
+Puis rouvre ou rafraîchis `dist/index.html`.
+
+Option confort pendant l’édition : `npm run build:watch` (recompile automatiquement).
+
+`npm run dev` existe aussi (serveur Vite) mais **n’est pas nécessaire** pour tester.
+
 ## Stack
 
-- **Phaser 3** — moteur de jeu (Canvas / WebGL)
-- **Vite** — bundler et serveur de dev → sortie `dist/`
-- **Capacitor** — packaging Android (`webDir: dist`)
-- **JavaScript** (ES modules)
+| Outil | Rôle |
+|-------|------|
+| Phaser 3 | Moteur de jeu |
+| Vite | Compile `src/` → `dist/` (script classique, pas module ES) |
+| Capacitor | Android — utilise le **même** `dist/` |
 
-Un seul build web (`dist/`) sert le navigateur, GitHub Pages et l’app Android.
+Un seul build (`dist/`) pour navigateur, GitHub Pages et Android.
 
-## Démarrage
-
-### Développement (recommandé)
-
-```bash
-npm install
-npm run dev
-```
-
-Le navigateur s’ouvre automatiquement. C’est le mode le plus rapide pour itérer.
-
-### Tester le build de production (identique à Capacitor)
+## Android (plus tard)
 
 ```bash
-npm run start
+npm run android      # Android Studio requis
 ```
-
-Compile dans `dist/` puis ouvre un aperçu local — **les mêmes fichiers** que Capacitor copiera dans l’app Android.
-
-### Android (Capacitor)
-
-Prérequis : Android Studio + SDK, émulateur ou téléphone en USB.
-
-```bash
-npm run android
-```
-
-Compile `dist/`, synchronise avec le projet `android/`, lance l’app.
-
-Synchronisation seule (sans lancer) :
-
-```bash
-npm run cap:sync
-```
-
-### GitHub Pages (en ligne)
-
-Après merge sur `main`, déploiement automatique de `dist/`. Active **Pages → Source : GitHub Actions** dans les paramètres du dépôt.
-
-## Pourquoi pas un fichier HTML autonome ?
-
-Le jeu utilise des modules ES et Phaser — les navigateurs bloquent souvent ça en `file://` (double-clic). Capacitor charge le jeu via une WebView avec une URL locale (`https://localhost`), comme `npm run preview`. Pas besoin d’un build spécial : **Vite → `dist/` → Capacitor**.
 
 ## Structure
 
 ```
-src/
-  core/       # Logique pure, sans Phaser (Grid, combat, tours…)
-  scenes/     # Scènes Phaser (affichage uniquement)
-  data/       # JSON : donjons, plans, dialogues…
-  assets/     # Images, spritesheets, audio
-android/      # Projet natif Capacitor (Android)
-dist/         # Build web (généré, non versionné)
-tools/        # Générateur de plans, éditeur de collision hub
+dist/           ← jeu jouable (index.html + game.js) — ouvre ça
+src/            ← code source
+  core/         ← logique pure
+  scenes/       ← Phaser
+  data/         ← JSON donjons, plans…
+android/        ← projet Capacitor
+tools/          ← générateur de plans hors ligne
 ```
 
 ## Jalons
 
 | # | Statut | Description |
 |---|--------|-------------|
-| 1 | ✅ | Grille, déplacement d’une entité, tileset statique |
-| 2 | ✅ | Générateur de plans hors ligne + autotiling |
-| 3 | — | Gestionnaire de tours + IA ennemis |
-| 4 | — | Combat et résolution des dégâts |
-| 5 | — | Alliés et IA d’équipe |
-| 6 | — | Interface mobile, contrôle au tap |
-| 7 | — | Inventaire, objets, échec d’expédition |
-| 8 | — | Hub, PNJ, dialogues, sauvegarde |
-| 9 | — | Prologue narratif |
-| 10 | 🔶 | Capacitor Android (base en place, test sur appareil à valider) |
+| 1 | ✅ | Grille, déplacement, tileset statique |
+| 2 | ✅ | Générateur de plans + autotiling |
+| 3 | — | Tours + IA ennemis |
+| 4 | — | Combat |
+| 5 | — | Alliés IA |
+| 6 | — | Tap mobile |
+| 7 | — | Inventaire, échec expédition |
+| 8 | — | Hub, dialogues, sauvegarde |
+| 9 | — | Prologue |
+| 10 | 🔶 | Capacitor Android (base en place) |
 
-## Générateur de plans (hors ligne)
+## Générateur de plans
 
 ```bash
 npm run generate:plans
-# ou
-node tools/generator.js --dungeon test-dungeon --floor 0 --count 10
 ```
 
-## Contrôles (jalon 2)
+## Contrôles
 
-- **Flèches** ou **WASD** : déplacer le héros d’une case
-- **G** : afficher / masquer la grille
-- **R** : tirer un nouveau plan au hasard
-
-## Document de conception
-
-Voir le document de référence fourni au dépôt (pitch, narration Aurore / `{hero}`, architecture, génération procédurale, système de conséquences).
+- **Flèches / WASD** — déplacement (1 case)
+- **G** — grille
+- **R** — nouveau plan

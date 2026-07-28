@@ -6,9 +6,8 @@
   "description": "RPG spatial 2D — PegasusCorp",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "start": "npm run build && vite preview",
+    "build": "vite build && node tools/fix-dist-html.js",
+    "build:watch": "vite build --watch",
     "cap:sync": "npm run build && cap sync",
     "android": "npm run cap:sync && cap run android",
     "generate:plans": "node tools/generator.js"
