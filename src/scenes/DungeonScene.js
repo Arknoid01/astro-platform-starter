@@ -57,50 +57,64 @@ export class DungeonScene extends Phaser.Scene {
   /** @type {boolean} */
   #showGrid = true;
 
-  async create() {
-    const plan = await pickRandomPlan('test-dungeon', 0);
+  create() {
+    try {
+      const plan = pickRandomPlan('test-dungeon', 0);
 
-    this.#tiles = plan.tiles;
-    this.#planSeed = plan.seed;
-    this.#heroCoord = { ...plan.spawnPoints.entrance };
+      this.#tiles = plan.tiles;
+      this.#planSeed = plan.seed;
+      this.#heroCoord = { ...plan.spawnPoints.entrance };
 
-    this.#drawMap();
-    this.#createGridOverlay();
-    this.#createHero();
-    this.#setupCamera();
-    this.#setupInput();
+      this.#drawMap();
+      this.#createGridOverlay();
+      this.#createHero();
+      this.#setupCamera();
+      this.#setupInput();
 
-    this.add
-      .text(16, 16, 'Astro RPG — Jalon 2', {
-        fontFamily: 'monospace',
-        fontSize: '14px',
-        color: '#8ab4ff',
-      })
-      .setScrollFactor(0)
-      .setDepth(100);
+      this.add
+        .text(16, 16, 'Astro RPG — Jalon 2', {
+          fontFamily: 'monospace',
+          fontSize: '14px',
+          color: '#8ab4ff',
+        })
+        .setScrollFactor(0)
+        .setDepth(100);
 
-    this.#infoText = this.add
-      .text(
-        16,
-        36,
-        `Seed ${plan.seed} · ${plan.populationMarkers.length} emplacements · R — nouveau plan`,
-        {
+      this.#infoText = this.add
+        .text(
+          16,
+          36,
+          `Seed ${plan.seed} · ${plan.populationMarkers.length} emplacements · R — nouveau plan`,
+          {
+            fontFamily: 'monospace',
+            fontSize: '12px',
+            color: '#6a7a8a',
+          }
+        )
+        .setScrollFactor(0)
+        .setDepth(100);
+
+      this.add
+        .text(16, 54, 'Flèches / WASD · G — grille', {
           fontFamily: 'monospace',
           fontSize: '12px',
           color: '#6a7a8a',
-        }
-      )
-      .setScrollFactor(0)
-      .setDepth(100);
-
-    this.add
-      .text(16, 54, 'Flèches / WASD · G — grille', {
-        fontFamily: 'monospace',
-        fontSize: '12px',
-        color: '#6a7a8a',
-      })
-      .setScrollFactor(0)
-      .setDepth(100);
+        })
+        .setScrollFactor(0)
+        .setDepth(100);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error('DungeonScene failed to load plan:', error);
+      this.add
+        .text(16, 16, `Erreur de chargement du plan:\n${message}`, {
+          fontFamily: 'monospace',
+          fontSize: '14px',
+          color: '#ff6b6b',
+          wordWrap: { width: 900 },
+        })
+        .setScrollFactor(0)
+        .setDepth(100);
+    }
   }
 
   #drawMap() {

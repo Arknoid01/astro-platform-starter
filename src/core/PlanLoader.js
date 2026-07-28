@@ -1,8 +1,11 @@
 import testDungeonConfig from '../data/dungeons/test-dungeon.json';
 
-/** Vite glob — all plan JSON files under dungeons */
+/**
+ * Vite glob keys look like: ../data/dungeons/<id>/plans/floor-0-plan-0.json
+ * (relative to this file — not /data/... URLs).
+ */
 const planModules = import.meta.glob('../data/dungeons/*/plans/*.json', {
-  eager: false,
+  eager: true,
 });
 
 /**
@@ -39,20 +42,19 @@ export function getDungeonConfig(dungeonId) {
  * @returns {string[]}
  */
 export function listPlanPaths(dungeonId, floorIndex) {
-  const prefix = `/data/dungeons/${dungeonId}/plans/floor-${floorIndex}-plan-`;
-  return Object.keys(planModules).filter((path) => path.includes(prefix));
+  const needle = `dungeons/${dungeonId}/plans/floor-${floorIndex}-plan-`;
+  return Object.keys(planModules).filter((path) => path.includes(needle));
 }
 
 /**
  * @param {string} path
- * @returns {Promise<DungeonPlan>}
+ * @returns {DungeonPlan}
  */
-export async function loadPlanByPath(path) {
-  const loader = planModules[path];
-  if (!loader) {
+export function loadPlanByPath(path) {
+  const module = planModules[path];
+  if (!module) {
     throw new Error(`Plan not found: ${path}`);
   }
-  const module = await loader();
   return module.default;
 }
 
@@ -60,9 +62,9 @@ export async function loadPlanByPath(path) {
  * @param {string} dungeonId
  * @param {number} floorIndex
  * @param {number} [planIndex]
- * @returns {Promise<DungeonPlan>}
+ * @returns {DungeonPlan}
  */
-export async function loadPlan(dungeonId, floorIndex, planIndex = 0) {
+export function loadPlan(dungeonId, floorIndex, planIndex = 0) {
   const paths = listPlanPaths(dungeonId, floorIndex);
   if (paths.length === 0) {
     throw new Error(`No plans for ${dungeonId} floor ${floorIndex}`);
@@ -76,12 +78,14 @@ export async function loadPlan(dungeonId, floorIndex, planIndex = 0) {
  * @param {string} dungeonId
  * @param {number} floorIndex
  * @param {() => number} [random]
- * @returns {Promise<DungeonPlan>}
+ * @returns {DungeonPlan}
  */
-export async function pickRandomPlan(dungeonId, floorIndex, random = Math.random) {
+export function pickRandomPlan(dungeonId, floorIndex, random = Math.random) {
   const paths = listPlanPaths(dungeonId, floorIndex);
   if (paths.length === 0) {
-    throw new Error(`No plans for ${dungeonId} floor ${floorIndex}`);
+    throw new Error(
+      `No plans for ${dungeonId} floor ${floorIndex} (checked ${Object.keys(planModules).length} glob entries)`
+    );
   }
 
   const index = Math.floor(random() * paths.length);
