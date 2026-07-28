@@ -1,5 +1,9 @@
 import Phaser from 'phaser';
 import { TILE_SIZE } from '../data/constants.js';
+import {
+  FLOOR_VARIANT_COUNT,
+  WALL_AUTOTILE_COUNT,
+} from '../core/Autotiler.js';
 
 /**
  * Generates placeholder textures until real LoRA tilesets are integrated.
@@ -10,30 +14,90 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   create() {
-    this.#createTileTextures();
+    this.#createFloorTextures();
+    this.#createWallAutotileTextures();
+    this.#createSpecialTileTextures();
     this.#createEntityTexture();
     this.scene.start('DungeonScene');
   }
 
-  #createTileTextures() {
-    const floor = this.make.graphics({ add: false });
-    floor.fillStyle(0x1a2a3a);
-    floor.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
-    floor.fillStyle(0x243448, 0.4);
-    floor.fillRect(2, 2, TILE_SIZE - 4, TILE_SIZE - 4);
-    floor.generateTexture('tile-floor', TILE_SIZE, TILE_SIZE);
-    floor.destroy();
+  #createFloorTextures() {
+    const baseColors = [0x1a2a3a, 0x1c2e40, 0x182838, 0x1e3244];
 
-    const wall = this.make.graphics({ add: false });
-    wall.fillStyle(0x3a4a5a);
-    wall.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
-    wall.lineStyle(2, 0x5a6a7a);
-    wall.strokeRect(1, 1, TILE_SIZE - 2, TILE_SIZE - 2);
-    wall.fillStyle(0x2a3a4a);
-    wall.fillRect(4, 4, TILE_SIZE - 8, TILE_SIZE - 8);
-    wall.generateTexture('tile-wall', TILE_SIZE, TILE_SIZE);
-    wall.destroy();
+    for (let variant = 0; variant < FLOOR_VARIANT_COUNT; variant++) {
+      const gfx = this.make.graphics({ add: false });
+      gfx.fillStyle(baseColors[variant]);
+      gfx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+      gfx.fillStyle(0x243448, 0.25 + variant * 0.05);
+      gfx.fillRect(2 + variant, 2, TILE_SIZE - 4 - variant, TILE_SIZE - 4);
+      gfx.generateTexture(`tile-floor-${variant}`, TILE_SIZE, TILE_SIZE);
+      gfx.destroy();
+    }
+  }
 
+  #createWallAutotileTextures() {
+    for (let mask = 0; mask < WALL_AUTOTILE_COUNT; mask++) {
+      const north = (mask & 1) !== 0;
+      const east = (mask & 2) !== 0;
+      const south = (mask & 4) !== 0;
+      const west = (mask & 8) !== 0;
+
+      const gfx = this.make.graphics({ add: false });
+      gfx.fillStyle(0x3a4a5a);
+      gfx.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+
+      // Darken sides adjacent to floor (open edges)
+      if (north) {
+        gfx.fillStyle(0x2a3848);
+        gfx.fillRect(0, 0, TILE_SIZE, 6);
+      }
+      if (east) {
+        gfx.fillStyle(0x2a3848);
+        gfx.fillRect(TILE_SIZE - 6, 0, 6, TILE_SIZE);
+      }
+      if (south) {
+        gfx.fillStyle(0x2a3848);
+        gfx.fillRect(0, TILE_SIZE - 6, TILE_SIZE, 6);
+      }
+      if (west) {
+        gfx.fillStyle(0x2a3848);
+        gfx.fillRect(0, 0, 6, TILE_SIZE);
+      }
+
+      // Highlight solid faces
+      gfx.lineStyle(2, 0x5a6a7a);
+      if (!north) {
+        gfx.lineBetween(0, 1, TILE_SIZE, 1);
+      }
+      if (!west) {
+        gfx.lineBetween(1, 0, 1, TILE_SIZE);
+      }
+
+      // Corner markers for debugging autotile (subtle)
+      const cornerColor = 0x6a7a8a;
+      if (north && east) {
+        gfx.fillStyle(cornerColor, 0.3);
+        gfx.fillRect(TILE_SIZE - 4, 0, 4, 4);
+      }
+      if (north && west) {
+        gfx.fillStyle(cornerColor, 0.3);
+        gfx.fillRect(0, 0, 4, 4);
+      }
+      if (south && east) {
+        gfx.fillStyle(cornerColor, 0.3);
+        gfx.fillRect(TILE_SIZE - 4, TILE_SIZE - 4, 4, 4);
+      }
+      if (south && west) {
+        gfx.fillStyle(cornerColor, 0.3);
+        gfx.fillRect(0, TILE_SIZE - 4, 4, 4);
+      }
+
+      gfx.generateTexture(`tile-wall-${mask}`, TILE_SIZE, TILE_SIZE);
+      gfx.destroy();
+    }
+  }
+
+  #createSpecialTileTextures() {
     const stairs = this.make.graphics({ add: false });
     stairs.fillStyle(0x1a2a3a);
     stairs.fillRect(0, 0, TILE_SIZE, TILE_SIZE);

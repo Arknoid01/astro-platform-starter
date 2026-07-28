@@ -1,7 +1,15 @@
 {
   "name": "test-dungeon",
   "floors": 5,
+  "plansPerFloor": 10,
   "tileset": "placeholder",
+  "generator": {
+    "width": 48,
+    "height": 36,
+    "cellCols": 4,
+    "cellRows": 3,
+    "corridorWidth": 2
+  },
   "enemyTables": [],
   "itemTables": []
 }

@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import { TILE, TILE_SIZE } from '../data/constants.js';
 import { canStepTo, gridToPixel, DIRECTIONS } from '../core/Grid.js';
-import planData from '../data/dungeons/test-dungeon/plans/floor-0-plan-0.json';
+import { getTileTextureKey } from '../core/Autotiler.js';
+import { pickRandomPlan } from '../core/PlanLoader.js';
 
 const KEY_MAP = {
   UP: Phaser.Input.Keyboard.KeyCodes.UP,
@@ -25,17 +26,10 @@ const DIR_FROM_KEYS = {
   [KEY_MAP.D]: DIRECTIONS.E,
 };
 
-const TILE_TEXTURE = {
-  [TILE.FLOOR]: 'tile-floor',
-  [TILE.WALL]: 'tile-wall',
-  [TILE.STAIRS]: 'tile-stairs',
-  [TILE.ENTRANCE]: 'tile-entrance',
-};
-
 const PASSABLE_TILES = [TILE.FLOOR, TILE.ENTRANCE, TILE.STAIRS];
 
 /**
- * Milestone 1: static tileset rendering + single-entity grid movement.
+ * Milestone 2: plan loading + autotiled wall rendering.
  */
 export class DungeonScene extends Phaser.Scene {
   constructor() {
@@ -44,6 +38,9 @@ export class DungeonScene extends Phaser.Scene {
 
   /** @type {number[][]} */
   #tiles;
+
+  /** @type {number} */
+  #planSeed = 0;
 
   /** @type {{ x: number, y: number }} */
   #heroCoord;
@@ -54,15 +51,18 @@ export class DungeonScene extends Phaser.Scene {
   /** @type {Phaser.GameObjects.Graphics} */
   #gridOverlay;
 
+  /** @type {Phaser.GameObjects.Text} */
+  #infoText;
+
   /** @type {boolean} */
   #showGrid = true;
 
-  /** @type {Phaser.Input.Keyboard.Key[]} */
-  #moveKeys;
+  async create() {
+    const plan = await pickRandomPlan('test-dungeon', 0);
 
-  create() {
-    this.#tiles = planData.tiles;
-    this.#heroCoord = { ...planData.spawnPoints.entrance };
+    this.#tiles = plan.tiles;
+    this.#planSeed = plan.seed;
+    this.#heroCoord = { ...plan.spawnPoints.entrance };
 
     this.#drawMap();
     this.#createGridOverlay();
@@ -71,7 +71,7 @@ export class DungeonScene extends Phaser.Scene {
     this.#setupInput();
 
     this.add
-      .text(16, 16, 'Astro RPG — Jalon 1', {
+      .text(16, 16, 'Astro RPG — Jalon 2', {
         fontFamily: 'monospace',
         fontSize: '14px',
         color: '#8ab4ff',
@@ -79,8 +79,22 @@ export class DungeonScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(100);
 
+    this.#infoText = this.add
+      .text(
+        16,
+        36,
+        `Seed ${plan.seed} · ${plan.populationMarkers.length} emplacements · R — nouveau plan`,
+        {
+          fontFamily: 'monospace',
+          fontSize: '12px',
+          color: '#6a7a8a',
+        }
+      )
+      .setScrollFactor(0)
+      .setDepth(100);
+
     this.add
-      .text(16, 36, 'Flèches / WASD — une case par action · G — grille', {
+      .text(16, 54, 'Flèches / WASD · G — grille', {
         fontFamily: 'monospace',
         fontSize: '12px',
         color: '#6a7a8a',
@@ -95,8 +109,7 @@ export class DungeonScene extends Phaser.Scene {
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        const code = this.#tiles[y][x];
-        const texture = TILE_TEXTURE[code] ?? 'tile-floor';
+        const texture = getTileTextureKey(this.#tiles, x, y, this.#planSeed);
         this.add
           .image(x * TILE_SIZE, y * TILE_SIZE, texture)
           .setOrigin(0, 0)
@@ -120,6 +133,7 @@ export class DungeonScene extends Phaser.Scene {
 
     this.#gridOverlay = gfx;
     this.#gridOverlay.setVisible(this.#showGrid);
+    this.#gridOverlay.setDepth(5);
   }
 
   #createHero() {
@@ -141,22 +155,15 @@ export class DungeonScene extends Phaser.Scene {
       return;
     }
 
-    this.#moveKeys = this.input.keyboard.addKeys({
-      up: KEY_MAP.UP,
-      down: KEY_MAP.DOWN,
-      left: KEY_MAP.LEFT,
-      right: KEY_MAP.RIGHT,
-      w: KEY_MAP.W,
-      a: KEY_MAP.A,
-      s: KEY_MAP.S,
-      d: KEY_MAP.D,
-      g: Phaser.Input.Keyboard.KeyCodes.G,
-    });
-
     this.input.keyboard.on('keydown', (event) => {
       if (event.code === 'KeyG') {
         this.#showGrid = !this.#showGrid;
         this.#gridOverlay.setVisible(this.#showGrid);
+        return;
+      }
+
+      if (event.code === 'KeyR') {
+        this.scene.restart();
         return;
       }
 

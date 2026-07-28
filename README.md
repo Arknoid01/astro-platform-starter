@@ -34,7 +34,7 @@ tools/        # Générateur de plans, éditeur de collision hub
 | # | Statut | Description |
 |---|--------|-------------|
 | 1 | ✅ | Grille, déplacement d’une entité, tileset statique |
-| 2 | — | Générateur de plans hors ligne + autotiling |
+| 2 | ✅ | Générateur de plans hors ligne + autotiling |
 | 3 | — | Gestionnaire de tours + IA ennemis |
 | 4 | — | Combat et résolution des dégâts |
 | 5 | — | Alliés et IA d’équipe |
@@ -44,10 +44,19 @@ tools/        # Générateur de plans, éditeur de collision hub
 | 9 | — | Prologue narratif |
 | 10 | — | Build Capacitor |
 
-## Contrôles (jalon 1)
+## Générateur de plans (hors ligne)
+
+```bash
+node tools/generator.js --dungeon test-dungeon --floor 0 --count 10
+```
+
+Options : `--width`, `--height`, `--seed`, `--count`, `--floor`.
+
+## Contrôles (jalon 2)
 
 - **Flèches** ou **WASD** : déplacer le héros d’une case
 - **G** : afficher / masquer la grille
+- **R** : tirer un nouveau plan au hasard
 
 ## Document de conception
 
