@@ -2,49 +2,42 @@
 
 Jeu de rôle spatial 2D, inspiré de Pokémon Donjon Mystère.
 
-## Jouer
+## Jouer (aucune commande)
 
-**Double-clic** sur `play/index.html` — ou ouvre le lien GitHub Pages après publication.
+### En ligne
 
-Aucun npm, aucun serveur, aucune commande.
+**https://arknoid01.github.io/astro-platform-starter/**
 
-```
-play/
-  index.html       ← ouvre ça
-  lib/phaser.min.js
-  js/              ← code du jeu + données intégrées
-```
+Si la page est vide : dans GitHub → **Settings → Pages** → Source : **Deploy from a branch** → branche `main` → dossier **`/docs`**.
+
+### En local
+
+Double-clic sur **`docs/index.html`**.
 
 ## Contrôles
 
-- **Flèches / WASD** — déplacement (1 case)
-- **G** — afficher / masquer la grille
-- **R** — nouveau plan aléatoire
+- **Flèches / WASD** — déplacement
+- **G** — grille
+- **R** — nouveau plan
 
-## Android (plus tard)
-
-Le dossier `play/` est aussi utilisé par Capacitor. Nécessite Node + Android Studio :
+## Android (optionnel)
 
 ```bash
 npm install
 npm run android
 ```
 
-## Outils (optionnel, pour modifier le jeu)
-
-Si quelqu'un ajoute du contenu :
+## Modifier le contenu (optionnel)
 
 ```bash
-npm install
-node tools/generator.js          # génère des plans JSON
-node tools/embed-plans.js        # intègre les plans dans play/js/plans-data.js
+node tools/generator.js
+node tools/embed-plans.js
 ```
 
 ## Structure
 
-| Dossier | Contenu |
-|---------|---------|
-| `play/` | Jeu jouable (HTML + JS classique) |
-| `src/data/` | Source JSON des donjons (pour les outils) |
-| `tools/` | Générateur de plans, intégration des données |
-| `android/` | App Android (Capacitor) |
+| Dossier | Rôle |
+|---------|------|
+| `docs/` | Jeu jouable + GitHub Pages + Capacitor |
+| `src/data/` | JSON source des donjons |
+| `tools/` | Générateur de plans |

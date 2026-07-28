@@ -1,4 +1,4 @@
-/** Tile codes — miroir de play/js/constants.js */
+/** Tile codes — miroir de docs/js/constants.js */
 const TILE = { FLOOR: 0, WALL: 1, STAIRS: 2, ENTRANCE: 3 };
 
 const PASSABLE = [TILE.FLOOR, TILE.ENTRANCE, TILE.STAIRS];

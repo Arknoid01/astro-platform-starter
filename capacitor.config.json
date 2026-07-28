@@ -1,7 +1,7 @@
 {
   "appId": "com.pegasuscorp.astrorpg",
   "appName": "Astro RPG",
-  "webDir": "play",
+  "webDir": "docs",
   "server": {
     "androidScheme": "https"
   }

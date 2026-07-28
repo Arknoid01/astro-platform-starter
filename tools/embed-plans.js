@@ -1,5 +1,5 @@
 /**
- * Lit les JSON de plans et génère play/js/plans-data.js (aucun fetch en jeu).
+ * Lit les JSON de plans et génère docs/js/plans-data.js (aucun fetch en jeu).
  * Usage (outil dev uniquement) : node tools/embed-plans.js
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const plansDir = join(root, 'src/data/dungeons/test-dungeon/plans');
-const outFile = join(root, 'play/js/plans-data.js');
+const outFile = join(root, 'docs/js/plans-data.js');
 
 const plans = [];
 
@@ -36,4 +36,4 @@ writeFileSync(
   `/* Données de donjon intégrées — ne pas éditer à la main */\nwindow.DUNGEON_PLANS = ${JSON.stringify(data)};\n`
 );
 
-console.log(`✓ ${plans.length} plan(s) → play/js/plans-data.js`);
+console.log(`✓ ${plans.length} plan(s) → docs/js/plans-data.js`);
