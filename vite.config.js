@@ -1,20 +1,11 @@
 import { defineConfig } from 'vite';
-import { viteSingleFile } from 'vite-plugin-singlefile';
-
-const standalone = process.env.STANDALONE === '1';
 
 export default defineConfig({
-  plugins: standalone ? [viteSingleFile()] : [],
+  // Relative paths — required for Capacitor, GitHub Pages, and static hosting.
   base: './',
   build: {
-    outDir: standalone ? 'standalone' : 'dist',
+    outDir: 'dist',
     assetsDir: 'assets',
-    assetsInlineLimit: standalone ? 100_000_000 : 4096,
-    rollupOptions: {
-      output: {
-        inlineDynamicImports: standalone,
-      },
-    },
   },
   server: {
     host: true,

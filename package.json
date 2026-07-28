@@ -7,17 +7,25 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:standalone": "STANDALONE=1 vite build",
     "preview": "vite preview",
     "start": "npm run build && vite preview",
-    "open": "npm run build:standalone && node tools/open-standalone.js",
+    "cap:sync": "npm run build && cap sync",
+    "android": "npm run cap:sync && cap run android",
     "generate:plans": "node tools/generator.js"
   },
   "dependencies": {
+    "@capacitor/android": "^8.0.2",
+    "@capacitor/core": "^8.0.2",
+    "@capacitor/preferences": "^8.0.1",
     "phaser": "^3.87.0"
   },
   "devDependencies": {
-    "vite": "^6.0.7",
-    "vite-plugin-singlefile": "^2.3.0"
+    "@capacitor/cli": "^8.0.2",
+    "vite": "^6.0.7"
+  },
+  "capacitor": {
+    "platforms": [
+      "android"
+    ]
   }
 }
